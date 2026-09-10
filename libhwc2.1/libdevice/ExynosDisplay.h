@@ -1774,6 +1774,8 @@ class ExynosDisplay {
 
         void contentProtectionUpdated(HdcpLevels hdcpLevels);
         virtual int32_t startHdcpNegotiation(const HdcpLevels& /*levels*/) { return HWC2_ERROR_NONE; }
+        virtual int32_t getPanelReplacementStatus() { return 0; }
+        virtual int32_t setCvMode(bool /*enabled*/, int /*intensity*/) { return 0; }
 
         class RefreshRateIndicator {
         public:

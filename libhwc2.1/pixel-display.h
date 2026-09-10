@@ -82,6 +82,24 @@ public:
     ndk::ScopedAStatus isProximitySensorStateCallbackSupported(bool* _aidl_return) override;
     ndk::ScopedAStatus registerProximitySensorStateChangeCallback(
             const std::shared_ptr<IDisplayProximitySensorCallback>& callback) override;
+    ndk::ScopedAStatus setFixedTe2Frequency(int freqHz, int* _aidl_return) override;
+    ndk::ScopedAStatus setPwmMode(PwmMode mode) override;
+    ndk::ScopedAStatus getPanelReplacementStatus(ScreenPartStatus* _aidl_return) override;
+    ndk::ScopedAStatus setDozeType(DozeType type, int* _aidl_return) override;
+    ndk::ScopedAStatus setIrcMode(IrcMode mode) override;
+    ndk::ScopedAStatus setCvMode(bool enabled, int intensity, int* _aidl_return) override;
+    ndk::ScopedAStatus setMinMode(bool active, int* _aidl_return) override;
+    ndk::ScopedAStatus getIrcModeCapability(IrcModeCapability* _aidl_return) override;
+    ndk::ScopedAStatus createHistogramObserver(
+            const std::string& name,
+            const std::shared_ptr<IHistogramCallback>& callback,
+            std::shared_ptr<IHistogramObserver>* _aidl_return) override;
+    ndk::ScopedAStatus setFeatureFlag(const DisplayFeatureFlag& updatedFlag) override;
+    ndk::ScopedAStatus registerDisplayModeRequestCallback(
+            const std::shared_ptr<IDisplayDisplayModeRequestCallback>& callback) override;
+    ndk::ScopedAStatus setDisplaySsc(bool enable) override;
+    ndk::ScopedAStatus setPreferredDisplayFreq(DisplayConfigType configType,
+                                              const std::vector<int>& freqsKHz) override;
 
 private:
     bool runMediator(const RoiRect &roi, const Weight &weight, const HistogramPos &pos,

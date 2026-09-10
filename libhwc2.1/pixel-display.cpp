@@ -454,6 +454,77 @@ ndk::ScopedAStatus Display::registerProximitySensorStateChangeCallback(
     return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
 }
 
+ndk::ScopedAStatus Display::setFixedTe2Frequency(int /*freqHz*/, int* /*_aidl_return*/) {
+    return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+}
+
+ndk::ScopedAStatus Display::setPwmMode(PwmMode /*mode*/) {
+    return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+}
+
+ndk::ScopedAStatus Display::getPanelReplacementStatus(ScreenPartStatus* _aidl_return) {
+    if (!_aidl_return) {
+        return ndk::ScopedAStatus::fromExceptionCode(EX_ILLEGAL_ARGUMENT);
+    }
+    if (mDisplay) {
+        *_aidl_return = static_cast<ScreenPartStatus>(mDisplay->getPanelReplacementStatus());
+        return ndk::ScopedAStatus::ok();
+    }
+    return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+}
+
+ndk::ScopedAStatus Display::setDozeType(DozeType /*type*/, int* /*_aidl_return*/) {
+    return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+}
+
+ndk::ScopedAStatus Display::setIrcMode(IrcMode /*mode*/) {
+    return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+}
+
+ndk::ScopedAStatus Display::setCvMode(bool enabled, int intensity, int* _aidl_return) {
+    if (mDisplay) {
+        int ret = mDisplay->setCvMode(enabled, intensity);
+        if (_aidl_return) {
+            *_aidl_return = ret;
+        }
+        return ndk::ScopedAStatus::ok();
+    }
+    return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+}
+
+ndk::ScopedAStatus Display::setMinMode(bool /*active*/, int* /*_aidl_return*/) {
+    return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+}
+
+ndk::ScopedAStatus Display::getIrcModeCapability(IrcModeCapability* /*_aidl_return*/) {
+    return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+}
+
+ndk::ScopedAStatus Display::createHistogramObserver(
+        const std::string& /*name*/,
+        const std::shared_ptr<IHistogramCallback>& /*callback*/,
+        std::shared_ptr<IHistogramObserver>* /*_aidl_return*/) {
+    return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+}
+
+ndk::ScopedAStatus Display::setFeatureFlag(const DisplayFeatureFlag& /*updatedFlag*/) {
+    return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+}
+
+ndk::ScopedAStatus Display::registerDisplayModeRequestCallback(
+        const std::shared_ptr<IDisplayDisplayModeRequestCallback>& /*callback*/) {
+    return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+}
+
+ndk::ScopedAStatus Display::setDisplaySsc(bool /*enable*/) {
+    return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+}
+
+ndk::ScopedAStatus Display::setPreferredDisplayFreq(DisplayConfigType /*configType*/,
+                                                   const std::vector<int>& /*freqsKHz*/) {
+    return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+}
+
 } // namespace display
 } // namespace pixel
 } // namespace hardware
