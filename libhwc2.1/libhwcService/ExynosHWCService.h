@@ -95,6 +95,7 @@ public:
                                                 settings) override;
     virtual int32_t setFixedTe2Rate(uint32_t displayId, int32_t rateHz);
     virtual int32_t setDisplayTemperature(uint32_t displayId, int32_t temperature);
+    virtual int32_t storeOriginalPanels(uint32_t displayId) override;
 
 private:
     friend class Singleton<ExynosHWCService>;

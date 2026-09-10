@@ -1399,6 +1399,7 @@ class ExynosDisplay {
         }
 
         virtual int32_t setFixedTe2Rate(const int __unused rateHz) { return NO_ERROR; }
+        virtual int32_t voteSingleTeMode(const RrThrottleRequester __unused requester, const bool __unused enable) { return 0; }
         virtual void onProximitySensorStateChanged(bool __unused active) { return; }
         bool isProximitySensorStateCallbackSupported() { return mDisplayTe2Manager != nullptr; }
 
@@ -1410,6 +1411,14 @@ class ExynosDisplay {
         }
 
         virtual void setForceColorUpdate(bool __unused force) { return; }
+
+        virtual int32_t startHdcpNegotiation(const HdcpLevels& /*levels*/) { return HWC2_ERROR_NONE; }
+        virtual int32_t getPanelReplacementStatus() { return 0; }
+        virtual int32_t storeOriginalPanels() const { return HWC2_ERROR_UNSUPPORTED; }
+        virtual int32_t updateCvMode(bool /*enabled*/, unsigned char /*intensity*/) { return 0; }
+        int32_t setCvMode(bool enabled, int intensity) {
+            return updateCvMode(enabled, static_cast<unsigned char>(intensity));
+        }
 
     protected:
         virtual bool getHDRException(ExynosLayer *layer);
@@ -1448,7 +1457,7 @@ class ExynosDisplay {
         // is the hint session both enabled and supported
         bool usePowerHintSession();
 
-        void setPeakRefreshRate(float rr) { mPeakRefreshRate = rr; }
+        virtual void setPeakRefreshRate(float rr) { mPeakRefreshRate = rr; }
         uint32_t getPeakRefreshRate();
         VsyncPeriodNanos getVsyncPeriod(const int32_t config);
         uint32_t getRefreshRate(const int32_t config);
@@ -1773,9 +1782,6 @@ class ExynosDisplay {
         virtual void hotplug();
 
         void contentProtectionUpdated(HdcpLevels hdcpLevels);
-        virtual int32_t startHdcpNegotiation(const HdcpLevels& /*levels*/) { return HWC2_ERROR_NONE; }
-        virtual int32_t getPanelReplacementStatus() { return 0; }
-        virtual int32_t setCvMode(bool /*enabled*/, int /*intensity*/) { return 0; }
 
         class RefreshRateIndicator {
         public:

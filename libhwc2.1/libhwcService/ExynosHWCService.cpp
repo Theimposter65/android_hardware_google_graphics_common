@@ -613,4 +613,16 @@ int32_t ExynosHWCService::setDisplayTemperature(uint32_t displayId, int32_t temp
     return NO_ERROR;
 }
 
+int32_t ExynosHWCService::storeOriginalPanels(uint32_t displayId) {
+    ALOGD("ExynosHWCService::%s() displayID(%u)", __func__, displayId);
+
+    auto display = mHWCCtx->device->getDisplay(displayId);
+
+    if (display != nullptr) {
+        return display->storeOriginalPanels();
+    }
+
+    return -EINVAL;
+}
+
 } //namespace android

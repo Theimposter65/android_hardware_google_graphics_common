@@ -83,6 +83,7 @@ enum {
     SET_PRESENT_TIMEOUT_CONTROLLER = 1017,
     SET_FIXED_TE2_RATE = 1018,
     SET_DISPLAY_TEMPERATURE = 1019,
+    STORE_ORIGINAL_PANELS = 1020,
 };
 
 class BpExynosHWCService : public BpInterface<IExynosHWCService> {
@@ -594,6 +595,14 @@ public:
         if (result) ALOGE("SET_DISPLAY_TEMPERATURE transact error(%d)", result);
         return result;
     }
+    virtual int32_t storeOriginalPanels(uint32_t displayId) override {
+        Parcel data, reply;
+        data.writeInterfaceToken(IExynosHWCService::getInterfaceDescriptor());
+        data.writeUint32(displayId);
+        int result = remote()->transact(STORE_ORIGINAL_PANELS, data, &reply);
+        if (result) ALOGE("STORE_ORIGINAL_PANELS transact error(%d)", result);
+        return result;
+    }
 };
 
 IMPLEMENT_META_INTERFACE(ExynosHWCService, "android.hal.ExynosHWCService");
@@ -940,6 +949,12 @@ status_t BnExynosHWCService::onTransact(
             uint32_t displayId = data.readUint32();
             int32_t temperature = data.readInt32();
             return setDisplayTemperature(displayId, temperature);
+        } break;
+
+        case STORE_ORIGINAL_PANELS: {
+            CHECK_INTERFACE(IExynosHWCService, data, reply);
+            uint32_t displayId = data.readUint32();
+            return storeOriginalPanels(displayId);
         } break;
 
         default:

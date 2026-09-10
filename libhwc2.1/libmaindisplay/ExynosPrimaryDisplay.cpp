@@ -1349,6 +1349,13 @@ int32_t ExynosPrimaryDisplay::setFixedTe2Rate(const int targetTe2RateHz) {
     }
 }
 
+int32_t ExynosPrimaryDisplay::voteSingleTeMode(const RrThrottleRequester requester, const bool enable) {
+    if (mDisplayTe2Manager) {
+        return NO_ERROR;
+    }
+    return HWC2_ERROR_UNSUPPORTED;
+}
+
 int32_t ExynosPrimaryDisplay::setDisplayTemperature(const int temperature) {
     mDisplayTemperature = temperature;
     return HWC2_ERROR_UNSUPPORTED;
@@ -1360,6 +1367,75 @@ void ExynosPrimaryDisplay::onProximitySensorStateChanged(bool active) {
         ATRACE_NAME("onProximitySensorStateChanged(HAL)");
         mProximitySensorStateChangeCallback->onProximitySensorStateChanged(active);
     }
+}
+
+std::string ExynosPrimaryDisplay::getPanelIdentificationString() const {
+    std::string sysfsPath = getPanelSysfsPath();
+    if (sysfsPath.empty()) {
+        return "";
+    }
+    std::string path = sysfsPath + "/panel_extinfo";
+    std::ifstream file(path);
+    if (!file.is_open()) {
+        return "";
+    }
+    std::string content;
+    std::getline(file, content);
+    return content;
+}
+
+int32_t ExynosPrimaryDisplay::getPanelReplacementStatus() {
+    std::string id = getPanelIdentificationString();
+    if (id.empty()) {
+        return 0; // ScreenPartStatus::UNSUPPORTED
+    }
+    std::string path = "/mnt/vendor/persist/display/original_panel_" + std::to_string(mIndex);
+    std::ifstream file(path);
+    if (!file.is_open()) {
+        ALOGI("%s file not found, fall back to legacy panel replacement check", path.c_str());
+        return 1; // ScreenPartStatus::UNKNOWN
+    }
+    std::string originalId;
+    file >> originalId;
+    if (originalId.empty()) {
+        return 1; // ScreenPartStatus::UNKNOWN
+    }
+    if (id == originalId) {
+        return 2; // ScreenPartStatus::ORIGINAL
+    }
+    return 3; // ScreenPartStatus::REPLACED
+}
+
+int32_t ExynosPrimaryDisplay::storeOriginalPanels() const {
+    std::string id = getPanelIdentificationString();
+    if (id.empty()) {
+        return -EINVAL;
+    }
+    std::string path = "/mnt/vendor/persist/display/original_panel_" + std::to_string(mIndex);
+    std::ofstream file(path);
+    if (!file.is_open()) {
+        ALOGE("%s() unable to open file '%s', error = %s", __func__, path.c_str(), strerror(errno));
+        return -errno;
+    }
+    file << id;
+    if (file.fail()) {
+        ALOGE("%s() unable to write file '%s', error = %s", __func__, path.c_str(), strerror(errno));
+        return -errno;
+    }
+    return NO_ERROR;
+}
+
+int32_t ExynosPrimaryDisplay::updateCvMode(bool enabled, unsigned char intensity) {
+    ALOGD("ExynosPrimaryDisplay::%s: enabled=%d, intensity=%u", __func__, enabled, intensity);
+    return HWC2_ERROR_UNSUPPORTED;
+}
+
+void ExynosPrimaryDisplay::setPeakRefreshRate(float rate) {
+    if (mVariableRefreshRateController) {
+        int peakFps = (rate > 0) ? static_cast<int>(rate) : 120;
+        mVariableRefreshRateController->setFixedRefreshRateRangeLocked(peakFps, 0, true);
+    }
+    mPeakRefreshRate = rate;
 }
 
 int32_t ExynosPrimaryDisplay::setMinIdleRefreshRate(const int targetFps,

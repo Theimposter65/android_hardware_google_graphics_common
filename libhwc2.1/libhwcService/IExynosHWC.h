@@ -87,6 +87,7 @@ public:
             const std::vector<std::pair<uint32_t, uint32_t>>& settings) = 0;
     virtual int32_t setFixedTe2Rate(uint32_t displayId, int32_t rateHz) = 0;
     virtual int32_t setDisplayTemperature(uint32_t displayId, int32_t temperature) = 0;
+    virtual int32_t storeOriginalPanels(uint32_t displayId) = 0;
 };
 
 /* Native Interface */

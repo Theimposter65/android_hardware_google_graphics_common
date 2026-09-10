@@ -81,6 +81,11 @@ class ExynosPrimaryDisplay : public ExynosDisplay {
         virtual void onVsync(int64_t timestamp) override;
 
         virtual int32_t setFixedTe2Rate(const int rateHz) override;
+        virtual int32_t voteSingleTeMode(const RrThrottleRequester requester, const bool enable) override;
+        virtual int32_t getPanelReplacementStatus() override;
+        virtual int32_t storeOriginalPanels() const override;
+        virtual int32_t updateCvMode(bool enabled, unsigned char intensity) override;
+        virtual void setPeakRefreshRate(float rate) override;
 
         virtual void onProximitySensorStateChanged(bool active) override;
 
@@ -121,6 +126,7 @@ class ExynosPrimaryDisplay : public ExynosDisplay {
             return getPanelSysfsPath(getDcDisplayType());
         }
         std::string getPanelSysfsPath(const displaycolor::DisplayType& type) const;
+        std::string getPanelIdentificationString() const;
 
         virtual bool isVrrSupported() const override { return mXrrSettings.versionInfo.isVrr(); }
 
