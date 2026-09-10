@@ -471,10 +471,25 @@ ndk::ScopedAStatus ComposerClient::setRefreshRateChangedCallbackDebugEnabled(int
 }
 
 ndk::ScopedAStatus ComposerClient::startHdcpNegotiation(int64_t display,
-                                                        const drm::HdcpLevels& /*levels*/) {
+                                                        const drm::HdcpLevels& levels) {
+    ATRACE_CALL();
     DEBUG_DISPLAY_FUNC(display);
-    LOG(ERROR) << "not implemented";
-    return ndk::ScopedAStatus::fromStatus(EX_UNSUPPORTED_OPERATION);
+    auto err = mHal->startHdcpNegotiation(display, levels);
+    if (err != HWC2_ERROR_NONE) {
+        if (mHalEventCallback) {
+            mHalEventCallback->onHdcpLevelsChanged(display, {});
+        }
+        return TO_BINDER_STATUS(err);
+    }
+    return ndk::ScopedAStatus::ok();
+}
+
+ndk::ScopedAStatus ComposerClient::getDisplayKnownVsyncSample(int64_t display,
+                                                             VsyncSample* sample) {
+    ATRACE_CALL();
+    DEBUG_DISPLAY_FUNC(display);
+    auto err = mHal->getDisplayKnownVsyncSample(display, sample);
+    return TO_BINDER_STATUS(err);
 }
 
 void ComposerClient::HalEventCallback::onRefreshRateChangedDebug(

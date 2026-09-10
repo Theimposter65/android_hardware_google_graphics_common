@@ -1326,4 +1326,16 @@ int32_t HalImpl::getMaxLayerPictureProfiles([[maybe_unused]] int64_t display,
     return HWC2_ERROR_UNSUPPORTED;
 }
 
+int32_t HalImpl::startHdcpNegotiation(int64_t display, const drm::HdcpLevels& levels) {
+    ExynosDisplay* halDisplay;
+    RET_IF_ERR(getHalDisplay(display, halDisplay));
+
+    return halDisplay->startHdcpNegotiation(levels);
+}
+
+int32_t HalImpl::getDisplayKnownVsyncSample([[maybe_unused]] int64_t display,
+                                            [[maybe_unused]] VsyncSample* outSample) {
+    return HWC2_ERROR_UNSUPPORTED;
+}
+
 } // namespace aidl::android::hardware::graphics::composer3::impl

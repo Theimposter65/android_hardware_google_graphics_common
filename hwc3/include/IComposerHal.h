@@ -81,6 +81,7 @@
 #include <aidl/android/hardware/graphics/composer3/VirtualDisplay.h>
 #include <aidl/android/hardware/graphics/composer3/VsyncPeriodChangeConstraints.h>
 #include <aidl/android/hardware/graphics/composer3/VsyncPeriodChangeTimeline.h>
+#include <aidl/android/hardware/graphics/composer3/VsyncSample.h>
 #include <aidl/android/hardware/graphics/composer3/ZOrder.h>
 #include <cutils/native_handle.h>
 #include <hardware/hwcomposer2.h>
@@ -254,6 +255,8 @@ class IComposerHal {
     virtual int32_t setRefreshRateChangedCallbackDebugEnabled(int64_t display, bool enabled) = 0;
     virtual int32_t layerSf2Hwc(int64_t display, int64_t layer, hwc2_layer_t& outMappedLayer) = 0;
     virtual int32_t getMaxLayerPictureProfiles(int64_t display, int32_t* outMaxProfiles) = 0;
+    virtual int32_t startHdcpNegotiation(int64_t display, const drm::HdcpLevels& levels) = 0;
+    virtual int32_t getDisplayKnownVsyncSample(int64_t display, VsyncSample* outSample) = 0;
 };
 
 } // namespace aidl::android::hardware::graphics::composer3::detail

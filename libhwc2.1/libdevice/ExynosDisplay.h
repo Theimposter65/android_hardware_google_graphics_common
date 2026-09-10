@@ -1773,6 +1773,7 @@ class ExynosDisplay {
         virtual void hotplug();
 
         void contentProtectionUpdated(HdcpLevels hdcpLevels);
+        virtual int32_t startHdcpNegotiation(const HdcpLevels& /*levels*/) { return HWC2_ERROR_NONE; }
 
         class RefreshRateIndicator {
         public:

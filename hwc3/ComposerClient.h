@@ -147,6 +147,8 @@ public:
                                                   int32_t* outMaxProfiles) override;
     ndk::ScopedAStatus startHdcpNegotiation(int64_t display,
                                             const drm::HdcpLevels& levels) override;
+    ndk::ScopedAStatus getDisplayKnownVsyncSample(int64_t display,
+                                                 VsyncSample* sample) override;
     ndk::ScopedAStatus getLuts(int64_t display, const std::vector<Buffer>&,
                                std::vector<Luts>*) override;
 
