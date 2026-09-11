@@ -99,7 +99,7 @@ public:
             const std::shared_ptr<IDisplayDisplayModeRequestCallback>& callback) override;
     ndk::ScopedAStatus setDisplaySsc(bool enable) override;
     ndk::ScopedAStatus setPreferredDisplayFreq(DisplayConfigType configType,
-                                              const std::vector<int>& freqsKHz) override;
+                                              const std::vector<int32_t>& freqsKHz) override;
 
 private:
     bool runMediator(const RoiRect &roi, const Weight &weight, const HistogramPos &pos,

@@ -64,6 +64,7 @@ using ::aidl::android::hardware::drm::HdcpLevels;
 using HbmState = ::aidl::com::google::hardware::pixel::display::HbmState;
 using LbeState = ::aidl::com::google::hardware::pixel::display::LbeState;
 using PanelCalibrationStatus = ::aidl::com::google::hardware::pixel::display::PanelCalibrationStatus;
+using ScreenPartStatus = ::aidl::com::google::hardware::pixel::display::ScreenPartStatus;
 
 using OverlayProperties = aidl::android::hardware::graphics::composer3::OverlayProperties;
 using namespace android;

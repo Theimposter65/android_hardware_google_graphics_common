@@ -1374,36 +1374,45 @@ std::string ExynosPrimaryDisplay::getPanelIdentificationString() const {
     if (sysfsPath.empty()) {
         return "";
     }
-    std::string path = sysfsPath + "/panel_extinfo";
-    std::ifstream file(path);
-    if (!file.is_open()) {
+    std::string extinfoPath = sysfsPath + "/panel_extinfo";
+    std::ifstream extinfoFile(extinfoPath);
+    std::string extinfo;
+    if (extinfoFile.is_open()) {
+        std::getline(extinfoFile, extinfo);
+    }
+    if (extinfo.length() <= 1) {
+        ALOGW("Failed to read panel extinfo");
         return "";
     }
-    std::string content;
-    std::getline(file, content);
-    return content;
+    std::string serialPath = sysfsPath + "/serial_number";
+    std::ifstream serialFile(serialPath);
+    std::string serial;
+    if (serialFile.is_open()) {
+        std::getline(serialFile, serial);
+    }
+    if (serial.empty()) {
+        ALOGW("Failed to read panel serial");
+        return "";
+    }
+    return extinfo.substr(extinfo.length() - 2) + "_" + serial;
 }
 
 int32_t ExynosPrimaryDisplay::getPanelReplacementStatus() {
-    std::string id = getPanelIdentificationString();
-    if (id.empty()) {
-        return 0; // ScreenPartStatus::UNSUPPORTED
-    }
     std::string path = "/mnt/vendor/persist/display/original_panel_" + std::to_string(mIndex);
     std::ifstream file(path);
     if (!file.is_open()) {
         ALOGI("%s file not found, fall back to legacy panel replacement check", path.c_str());
-        return 1; // ScreenPartStatus::UNKNOWN
+        return (getPanelCalibrationStatus() != PanelCalibrationStatus::ORIGINAL)
+                ? static_cast<int32_t>(ScreenPartStatus::REPLACED)
+                : static_cast<int32_t>(ScreenPartStatus::ORIGINAL);
     }
     std::string originalId;
     file >> originalId;
-    if (originalId.empty()) {
-        return 1; // ScreenPartStatus::UNKNOWN
-    }
+    std::string id = getPanelIdentificationString();
     if (id == originalId) {
-        return 2; // ScreenPartStatus::ORIGINAL
+        return static_cast<int32_t>(ScreenPartStatus::ORIGINAL);
     }
-    return 3; // ScreenPartStatus::REPLACED
+    return static_cast<int32_t>(ScreenPartStatus::REPLACED);
 }
 
 int32_t ExynosPrimaryDisplay::storeOriginalPanels() const {

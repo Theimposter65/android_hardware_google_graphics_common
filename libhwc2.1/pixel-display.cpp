@@ -521,7 +521,7 @@ ndk::ScopedAStatus Display::setDisplaySsc(bool /*enable*/) {
 }
 
 ndk::ScopedAStatus Display::setPreferredDisplayFreq(DisplayConfigType /*configType*/,
-                                                   const std::vector<int>& /*freqsKHz*/) {
+                                                    const std::vector<int32_t>& /*freqsKHz*/) {
     return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
 }
 

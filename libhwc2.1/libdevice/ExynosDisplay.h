@@ -1413,7 +1413,9 @@ class ExynosDisplay {
         virtual void setForceColorUpdate(bool __unused force) { return; }
 
         virtual int32_t startHdcpNegotiation(const HdcpLevels& /*levels*/) { return HWC2_ERROR_NONE; }
-        virtual int32_t getPanelReplacementStatus() { return 0; }
+        virtual int32_t getPanelReplacementStatus() {
+            return static_cast<int32_t>(ScreenPartStatus::UNSUPPORTED);
+        }
         virtual int32_t storeOriginalPanels() const { return HWC2_ERROR_UNSUPPORTED; }
         virtual int32_t updateCvMode(bool /*enabled*/, unsigned char /*intensity*/) { return 0; }
         int32_t setCvMode(bool enabled, int intensity) {
