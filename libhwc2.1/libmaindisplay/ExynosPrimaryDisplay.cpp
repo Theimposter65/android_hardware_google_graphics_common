@@ -1408,7 +1408,15 @@ int32_t ExynosPrimaryDisplay::getPanelReplacementStatus() {
     }
     std::string originalId;
     file >> originalId;
+    if (originalId.empty()) {
+        return (getPanelCalibrationStatus() != PanelCalibrationStatus::ORIGINAL)
+                ? static_cast<int32_t>(ScreenPartStatus::REPLACED)
+                : static_cast<int32_t>(ScreenPartStatus::ORIGINAL);
+    }
     std::string id = getPanelIdentificationString();
+    if (id.empty()) {
+        return static_cast<int32_t>(ScreenPartStatus::UNSUPPORTED);
+    }
     if (id == originalId) {
         return static_cast<int32_t>(ScreenPartStatus::ORIGINAL);
     }
