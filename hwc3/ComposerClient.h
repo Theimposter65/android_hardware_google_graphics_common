@@ -16,8 +16,10 @@
 
 #pragma once
 
+#include <aidl/android/hardware/drm/HdcpLevels.h>
 #include <aidl/android/hardware/graphics/common/DisplayDecorationSupport.h>
 #include <aidl/android/hardware/graphics/composer3/BnComposerClient.h>
+#include <aidl/android/hardware/graphics/composer3/Luts.h>
 #include <utils/Mutex.h>
 
 #include <memory>
@@ -27,6 +29,8 @@
 #include "include/IResourceManager.h"
 
 namespace aidl::android::hardware::graphics::composer3::impl {
+
+namespace drm = ::aidl::android::hardware::drm;
 
 class ComposerClient : public BnComposerClient {
 public:

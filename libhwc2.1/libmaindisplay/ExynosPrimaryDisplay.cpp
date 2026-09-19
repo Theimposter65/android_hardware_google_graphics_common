@@ -26,6 +26,7 @@
 
 #include <chrono>
 #include <fstream>
+#include <sstream>
 
 #include "../libvrr/FileNode.h"
 #include "../libvrr/VariableRefreshRateVersion.h"
@@ -1349,11 +1350,40 @@ int32_t ExynosPrimaryDisplay::setFixedTe2Rate(const int targetTe2RateHz) {
     }
 }
 
-int32_t ExynosPrimaryDisplay::voteSingleTeMode(const RrThrottleRequester requester, const bool enable) {
-    if (mDisplayTe2Manager) {
-        return NO_ERROR;
+const char* ExynosPrimaryDisplay::getThrottleRequesterName(RrThrottleRequester requester) {
+    switch (requester) {
+        case RrThrottleRequester::PIXEL_DISP: return "PIXEL_DISP";
+        case RrThrottleRequester::TEST: return "TEST";
+        case RrThrottleRequester::LHBM: return "LHBM";
+        case RrThrottleRequester::BRIGHTNESS: return "BRIGHTNESS";
+        default: return "UNKNOWN";
     }
-    return HWC2_ERROR_UNSUPPORTED;
+}
+
+int32_t ExynosPrimaryDisplay::voteSingleTeMode(const RrThrottleRequester requester, const bool enable) {
+    std::lock_guard<std::mutex> lock(mSingleTeModeMutex);
+    uint32_t bit = 1U << toUnderlying(requester);
+    if (enable) {
+        mSingleTeModeVotes |= bit;
+    } else {
+        mSingleTeModeVotes &= ~bit;
+    }
+
+    bool anyVote = (mSingleTeModeVotes != 0);
+    onProximitySensorStateChanged(anyVote);
+
+    std::stringstream ss;
+    ss << "Single TE mode votes: [\n";
+    for (uint32_t i = 0; i < toUnderlying(RrThrottleRequester::MAX); ++i) {
+        auto req = static_cast<RrThrottleRequester>(i);
+        bool voted = (mSingleTeModeVotes & (1U << i)) != 0;
+        ss << "  Voter name : " << getThrottleRequesterName(req)
+           << " single TE mode ? " << (voted ? "true" : "false") << "\n";
+    }
+    ss << "]\n";
+    ALOGD("%s", ss.str().c_str());
+
+    return NO_ERROR;
 }
 
 int32_t ExynosPrimaryDisplay::setDisplayTemperature(const int temperature) {
@@ -1432,12 +1462,12 @@ int32_t ExynosPrimaryDisplay::storeOriginalPanels() const {
     std::ofstream file(path);
     if (!file.is_open()) {
         ALOGE("%s() unable to open file '%s', error = %s", __func__, path.c_str(), strerror(errno));
-        return -errno;
+        return -EINVAL;
     }
     file << id;
     if (file.fail()) {
         ALOGE("%s() unable to write file '%s', error = %s", __func__, path.c_str(), strerror(errno));
-        return -errno;
+        return -EINVAL;
     }
     return NO_ERROR;
 }

@@ -242,6 +242,10 @@ class ExynosPrimaryDisplay : public ExynosDisplay {
         XrrSettings_t mXrrSettings;
         std::shared_ptr<VariableRefreshRateController> mVariableRefreshRateController;
         uint32_t mDisplayTemperature = UINT_MAX;
+
+        std::mutex mSingleTeModeMutex;
+        uint32_t mSingleTeModeVotes = 0;
+        static const char* getThrottleRequesterName(RrThrottleRequester requester);
 };
 
 #endif

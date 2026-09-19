@@ -83,6 +83,7 @@
 #include <aidl/android/hardware/graphics/composer3/VsyncPeriodChangeTimeline.h>
 #include <aidl/android/hardware/graphics/composer3/VsyncSample.h>
 #include <aidl/android/hardware/graphics/composer3/ZOrder.h>
+#include <aidl/android/hardware/graphics/composer3/Luts.h>
 #include <cutils/native_handle.h>
 #include <hardware/hwcomposer2.h>
 // avoid naming conflict
@@ -91,6 +92,8 @@ using AidlNativeHandle = aidl::android::hardware::common::NativeHandle;
 using DisplayConfiguration = aidl::android::hardware::graphics::composer3::DisplayConfiguration;
 
 namespace aidl::android::hardware::graphics::composer3::impl {
+
+namespace drm = ::aidl::android::hardware::drm;
 
 // Abstraction of ComposerHal. Returned error code is compatible with AIDL
 // IComposerClient interface.
@@ -257,6 +260,8 @@ class IComposerHal {
     virtual int32_t getMaxLayerPictureProfiles(int64_t display, int32_t* outMaxProfiles) = 0;
     virtual int32_t startHdcpNegotiation(int64_t display, const drm::HdcpLevels& levels) = 0;
     virtual int32_t getDisplayKnownVsyncSample(int64_t display, VsyncSample* outSample) = 0;
+    virtual int32_t getLuts(int64_t display, const std::vector<Buffer>& buffers,
+                            std::vector<Luts>* outLuts) = 0;
 };
 
 } // namespace aidl::android::hardware::graphics::composer3::detail

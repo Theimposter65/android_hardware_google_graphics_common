@@ -33,6 +33,8 @@ typedef struct exynos_hwc2_device_t ExynosHWCCtx;
 
 namespace aidl::android::hardware::graphics::composer3::impl {
 
+namespace drm = ::aidl::android::hardware::drm;
+
 // Forward aidl call to Exynos HWC
 class HalImpl : public IComposerHal {
   public:
@@ -189,6 +191,8 @@ class HalImpl : public IComposerHal {
       int32_t getMaxLayerPictureProfiles(int64_t display, int32_t* outMaxProfiles) override;
       int32_t startHdcpNegotiation(int64_t display, const drm::HdcpLevels& levels) override;
       int32_t getDisplayKnownVsyncSample(int64_t display, VsyncSample* outSample) override;
+      int32_t getLuts(int64_t display, const std::vector<Buffer>& buffers,
+                      std::vector<Luts>* outLuts) override;
 
   private:
       void initCaps(bool batchingSupported);

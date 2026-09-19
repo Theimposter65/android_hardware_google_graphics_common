@@ -17,6 +17,22 @@
 #pragma once
 
 #include <aidl/com/google/hardware/pixel/display/BnDisplay.h>
+#include <aidl/com/google/hardware/pixel/display/DisplayConfigType.h>
+#include <aidl/com/google/hardware/pixel/display/DisplayFeatureFlag.h>
+#include <aidl/com/google/hardware/pixel/display/DisplayStats.h>
+#include <aidl/com/google/hardware/pixel/display/DozeType.h>
+#include <aidl/com/google/hardware/pixel/display/HbmState.h>
+#include <aidl/com/google/hardware/pixel/display/HistogramCapability.h>
+#include <aidl/com/google/hardware/pixel/display/HistogramErrorCode.h>
+#include <aidl/com/google/hardware/pixel/display/IDisplayDisplayModeRequestCallback.h>
+#include <aidl/com/google/hardware/pixel/display/IHistogramCallback.h>
+#include <aidl/com/google/hardware/pixel/display/IHistogramObserver.h>
+#include <aidl/com/google/hardware/pixel/display/IrcMode.h>
+#include <aidl/com/google/hardware/pixel/display/IrcModeCapability.h>
+#include <aidl/com/google/hardware/pixel/display/LbeState.h>
+#include <aidl/com/google/hardware/pixel/display/PanelCalibrationStatus.h>
+#include <aidl/com/google/hardware/pixel/display/PwmMode.h>
+#include <aidl/com/google/hardware/pixel/display/ScreenPartStatus.h>
 
 #include "./histogram_mediator.h"
 #include "ExynosDevice.h"

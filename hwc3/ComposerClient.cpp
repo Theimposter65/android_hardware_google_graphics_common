@@ -99,11 +99,11 @@ ndk::ScopedAStatus ComposerClient::getMaxLayerPictureProfiles(int64_t display,
     return TO_BINDER_STATUS(err);
 }
 
-ndk::ScopedAStatus ComposerClient::getLuts(int64_t display, const std::vector<Buffer>& /*buffers*/,
-                                           std::vector<Luts>* /*luts*/) {
+ndk::ScopedAStatus ComposerClient::getLuts(int64_t display, const std::vector<Buffer>& buffers,
+                                           std::vector<Luts>* luts) {
     DEBUG_DISPLAY_FUNC(display);
-    LOG(ERROR) << "not implemented";
-    return ndk::ScopedAStatus::fromStatus(EX_UNSUPPORTED_OPERATION);
+    auto err = mHal->getLuts(display, buffers, luts);
+    return TO_BINDER_STATUS(err);
 }
 
 ndk::ScopedAStatus ComposerClient::destroyLayer(int64_t display, int64_t layer) {
@@ -476,10 +476,10 @@ ndk::ScopedAStatus ComposerClient::startHdcpNegotiation(int64_t display,
     DEBUG_DISPLAY_FUNC(display);
     auto err = mHal->startHdcpNegotiation(display, levels);
     if (err != HWC2_ERROR_NONE) {
+        ALOGE("startHdcpNegotiation failed with error: %d", static_cast<int32_t>(err));
         if (mHalEventCallback) {
             mHalEventCallback->onHdcpLevelsChanged(display, {});
         }
-        return TO_BINDER_STATUS(err);
     }
     return ndk::ScopedAStatus::ok();
 }
