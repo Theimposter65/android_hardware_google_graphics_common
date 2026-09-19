@@ -16,6 +16,7 @@
 
 #include "ExynosExternalDisplay.h"
 #include <errno.h>
+#include <fstream>
 #include <hardware/hwcomposer_defs.h>
 #include <linux/fb.h>
 #include "ExynosDevice.h"
@@ -609,4 +610,25 @@ void ExynosExternalDisplay::reportUsage(bool enabled) {
 
     ATRACE_NAME("report ext usage");
     reportDisplayPortUsage(mXres, mYres, refreshRate, manufacturerInfo, productId, enabled);
+}
+
+int32_t ExynosExternalDisplay::startHdcpNegotiation(const HdcpLevels& /*levels*/) {
+    if (!mEnabled) {
+        ALOGW("%s external display is not enabled", __func__);
+        return NO_ERROR;
+    }
+
+    const char* kHdcpNegotiationNode =
+            "/sys/devices/platform/exynos-drm/displayport/drm-displayport/hdcp_negotiation";
+    std::ofstream file(kHdcpNegotiationNode);
+    if (!file.is_open()) {
+        ALOGE("%s unable to open node '%s', error = %s", __func__,
+              kHdcpNegotiationNode, strerror(errno));
+        return errno;
+    }
+
+    file << 1;
+    file.close();
+    ALOGI("start HDCP negotiation");
+    return NO_ERROR;
 }

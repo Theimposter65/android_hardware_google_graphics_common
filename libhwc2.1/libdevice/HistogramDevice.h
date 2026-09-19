@@ -573,7 +573,14 @@ protected:
                     EXCLUDES(mInitDrmDoneMutex, mHistogramMutex, mBlobIdDataMutex);
 
     /**
-     * receiveBlobIdData
+     * requestFrameUpdate
+     *
+     * Request a frame update via onRefresh and update channels from CONFIG_PENDING to CONFIG_BLOB_ADDED.
+     */
+    void requestFrameUpdate() EXCLUDES(mHistogramMutex);
+
+    /**
+     * retrieveBlobIdData
      *
      * Wait for the drm event of the blobId, and copy the data into histogramBuffer if no error.
      * Note: It may take for a while, this function should be called without any mutex held except
@@ -587,12 +594,12 @@ protected:
      * @blobIdData is the histogram data query related struct of the blobId
      * @lock is the unique lock of the data query request.
      */
-    std::cv_status receiveBlobIdData(ExynosDisplayDrmInterface* const moduleDisplayInterface,
-                                     std::vector<char16_t>* histogramBuffer,
-                                     HistogramErrorCode* histogramErrorCode, const int channelId,
-                                     const uint32_t blobId,
-                                     const std::shared_ptr<BlobIdData>& blobIdData,
-                                     std::unique_lock<std::mutex>& lock)
+    std::cv_status retrieveBlobIdData(ExynosDisplayDrmInterface* const moduleDisplayInterface,
+                                      std::vector<char16_t>* histogramBuffer,
+                                      HistogramErrorCode* histogramErrorCode, const int channelId,
+                                      const uint32_t blobId,
+                                      const std::shared_ptr<BlobIdData>& blobIdData,
+                                      std::unique_lock<std::mutex>& lock)
             REQUIRES(blobIdData->mDataCollectingMutex)
                     EXCLUDES(mInitDrmDoneMutex, mHistogramMutex, mBlobIdDataMutex);
 

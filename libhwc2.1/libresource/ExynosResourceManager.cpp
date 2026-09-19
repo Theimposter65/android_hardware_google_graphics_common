@@ -2599,6 +2599,13 @@ mpp_phycal_type_t ExynosResourceManager::getPhysicalType(int ch) const {
     return MPP_P_TYPE_MAX;
 }
 
+mpp_phycal_type_t getMPPTypeFromDPPChannel(unsigned int channel) {
+    if (channel < MAX_DECON_DMA_TYPE) {
+        return idma_channel_map[channel].type;
+    }
+    return MPP_P_TYPE_MAX;
+}
+
 ExynosMPP* ExynosResourceManager::getOtfMPPWithChannel(int ch)
 {
     ExynosMPP *otfMPP = NULL;

@@ -3107,6 +3107,19 @@ void ExynosDisplayDrmInterface::setProductId(uint8_t edid10, uint8_t edid11) {
     mProductId = edid11 << 8 | edid10;
 }
 
+int32_t ExynosDisplayDrmInterface::requestHdcpStateUpdate(bool enable) {
+    const DrmProperty& property = mDrmConnector->content_protection();
+    int ret = drmModeConnectorSetProperty(mDrmDevice->fd(), mDrmConnector->id(),
+                                          property.id(), enable ? 1 : 0);
+    if (ret) {
+        ALOGE("update output state ret (%d)", ret);
+        String8 err;
+        err.appendFormat("update output state ret (%d)", ret);
+        saveErrorLog(err, mExynosDisplay);
+    }
+    return ret;
+}
+
 ExynosDisplay* ExynosDisplayDrmInterface::borrowedCrtcFrom() {
     return mBorrowedCrtcFrom;
 }

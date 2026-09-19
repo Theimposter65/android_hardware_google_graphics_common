@@ -453,6 +453,7 @@ class ExynosDisplayDrmInterface :
         virtual uint32_t getManufacturerInfo() override { return mManufacturerInfo; }
         virtual void setProductId(uint8_t edid10, uint8_t edid11) override;
         virtual uint32_t getProductId() override { return mProductId; }
+        virtual int32_t requestHdcpStateUpdate(bool enable) override;
 
         // This function will swap crtc/decon assigned to this display, with the crtc/decon of
         // the provided |anotherDisplay|. It is used on foldable devices, where decon0/1 support

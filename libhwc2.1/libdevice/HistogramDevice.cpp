@@ -202,8 +202,7 @@ ndk::ScopedAStatus HistogramDevice::registerHistogram(const ndk::SpAIBinder& tok
     }
 
     if (needRefresh) {
-        ATRACE_NAME("HistogramOnRefresh");
-        mDisplay->mDevice->onRefresh(mDisplay->mDisplayId);
+        requestFrameUpdate();
     }
 
     HIST_LOG(D, "register client successfully");
@@ -302,8 +301,7 @@ ndk::ScopedAStatus HistogramDevice::reconfigHistogram(const ndk::SpAIBinder& tok
     }
 
     if (needRefresh) {
-        ATRACE_NAME("HistogramOnRefresh");
-        mDisplay->mDevice->onRefresh(mDisplay->mDisplayId);
+        requestFrameUpdate();
     }
 
     return ndk::ScopedAStatus::ok();
@@ -368,13 +366,23 @@ ndk::ScopedAStatus HistogramDevice::unregisterHistogram(const ndk::SpAIBinder& t
     }
 
     if (needRefresh) {
-        ATRACE_NAME("HistogramOnRefresh");
-        mDisplay->mDevice->onRefresh(mDisplay->mDisplayId);
+        requestFrameUpdate();
     }
 
     HIST_LOG(D, "unregister client successfully");
 
     return ndk::ScopedAStatus::ok();
+}
+
+void HistogramDevice::requestFrameUpdate() {
+    ATRACE_CALL();
+    mDisplay->mDevice->onRefresh(mDisplay->mDisplayId);
+    SCOPED_HIST_LOCK(mHistogramMutex);
+    for (auto& channel : mChannels) {
+        if (channel.mStatus == ChannelStatus_t::CONFIG_PENDING) {
+            channel.mStatus = ChannelStatus_t::CONFIG_BLOB_ADDED;
+        }
+    }
 }
 
 void HistogramDevice::_handleDrmEvent(void* event, uint32_t blobId, char16_t* buffer) {
@@ -855,8 +863,8 @@ void HistogramDevice::getHistogramData(const ndk::SpAIBinder& token,
         if (*histogramErrorCode != HistogramErrorCode::NONE) return;
 
         // Receive the drmEvent of the blobId (with mDataCollectingMutex held)
-        cv_status = receiveBlobIdData(moduleDisplayInterface, histogramBuffer, histogramErrorCode,
-                                      channelId, blobId, blobIdData, lock);
+        cv_status = retrieveBlobIdData(moduleDisplayInterface, histogramBuffer, histogramErrorCode,
+                                       channelId, blobId, blobIdData, lock);
     }
 
     // Check the query result and clear the buffer if needed (no lock is held now)
@@ -898,7 +906,7 @@ void HistogramDevice::requestBlobIdData(ExynosDisplayDrmInterface* const moduleD
     blobIdData->mCollectStatus = CollectStatus_t::COLLECTING;
 }
 
-std::cv_status HistogramDevice::receiveBlobIdData(
+std::cv_status HistogramDevice::retrieveBlobIdData(
         ExynosDisplayDrmInterface* const moduleDisplayInterface,
         std::vector<char16_t>* histogramBuffer, HistogramErrorCode* histogramErrorCode,
         const int channelId, const uint32_t blobId, const std::shared_ptr<BlobIdData>& blobIdData,

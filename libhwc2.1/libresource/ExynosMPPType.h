@@ -155,4 +155,6 @@ struct exynos_mpp_t {
     uint32_t axi_port_index;
 };
 
+mpp_phycal_type_t getMPPTypeFromDPPChannel(unsigned int channel);
+
 #endif

@@ -58,6 +58,7 @@ class ExynosExternalDisplay : public ExynosDisplay {
         bool checkRotate();
         bool handleRotate();
         virtual void handleHotplugEvent(bool hpdStatus);
+        virtual int32_t startHdcpNegotiation(const HdcpLevels& levels) override;
 
         bool mEnabled;
         bool mBlanked;
