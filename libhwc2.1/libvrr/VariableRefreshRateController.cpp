@@ -582,6 +582,13 @@ int VariableRefreshRateController::setFixedRefreshRateRange(
     ATRACE_CALL();
     ATRACE_INT(kMinimumRefreshRateRequestTraceName, minimumRefreshRate);
     const std::lock_guard<std::mutex> lock(mMutex);
+    return setFixedRefreshRateRangeLocked(minimumRefreshRate,
+                                          minLockTimeForPeakRefreshRate, false);
+}
+
+int VariableRefreshRateController::setFixedRefreshRateRangeLocked(
+        uint32_t minimumRefreshRate, uint64_t minLockTimeForPeakRefreshRate,
+        bool force) {
     // Discontinue handling fixed refresh rate range settings after power-off, as we will
     // immediately configure it again.
     if (mPowerMode == HWC_POWER_MODE_OFF) {
@@ -599,7 +606,7 @@ int VariableRefreshRateController::setFixedRefreshRateRange(
 
     mPendingMinimumRefreshRateRequest = std::nullopt;
     dropEventLocked(VrrControllerEventType::kMinimumRefreshRateControlEventMask);
-    if (minimumRefreshRate == mMinimumRefreshRate) {
+    if (!force && minimumRefreshRate == mMinimumRefreshRate) {
         return NO_ERROR;
     }
 
@@ -615,6 +622,18 @@ int VariableRefreshRateController::setFixedRefreshRateRange(
         postEvent(VrrControllerEventType::kMinimumRefreshRateWaitForConfigTimeout,
                   getSteadyClockTimeNs() + kWaitForConfigTimeoutNs);
         return NO_ERROR;
+    }
+}
+
+void VariableRefreshRateController::setPeakRefreshRate(int peakFps) {
+    const std::lock_guard<std::mutex> lock(mMutex);
+    if (static_cast<uint32_t>(peakFps) == mPeakRefreshRate) {
+        return;
+    }
+    mPeakRefreshRate = peakFps;
+    if (mMinimumRefreshRate > 0) {
+        setFixedRefreshRateRangeLocked(mMinimumRefreshRate,
+                                       mMaximumRefreshRateTimeoutNs, true);
     }
 }
 

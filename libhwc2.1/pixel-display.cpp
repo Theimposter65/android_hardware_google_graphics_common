@@ -142,6 +142,7 @@ ndk::ScopedAStatus Display::getLhbmState(bool *_aidl_return) {
 
 ndk::ScopedAStatus Display::setPeakRefreshRate(int rate) {
     if (mDisplay && mDisplay->mOperationRateManager) {
+        mDisplay->setPeakRefreshRate(static_cast<float>(rate));
         mDisplay->mOperationRateManager->onPeakRefreshRate(rate);
         return ndk::ScopedAStatus::ok();
     }

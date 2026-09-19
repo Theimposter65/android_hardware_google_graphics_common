@@ -1449,8 +1449,9 @@ int32_t ExynosPrimaryDisplay::updateCvMode(bool enabled, unsigned char intensity
 
 void ExynosPrimaryDisplay::setPeakRefreshRate(float rate) {
     if (mVariableRefreshRateController) {
-        int peakFps = (rate > 0) ? static_cast<int>(rate) : 120;
-        mVariableRefreshRateController->setFixedRefreshRateRangeLocked(peakFps, 0, true);
+        int converted = static_cast<int>(std::round(rate));
+        int peakFps = (converted == INT_MAX || converted <= 0) ? 120 : converted;
+        mVariableRefreshRateController->setPeakRefreshRate(peakFps);
     }
     mPeakRefreshRate = rate;
 }

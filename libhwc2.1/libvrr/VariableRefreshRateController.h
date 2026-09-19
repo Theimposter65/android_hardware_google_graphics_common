@@ -130,6 +130,16 @@ public:
     int setFixedRefreshRateRange(uint32_t minimumRefreshRate,
                                  uint64_t minLockTimeForPeakRefreshRate);
 
+    // Lock-held variant with force parameter. Called by setPeakRefreshRate
+    // which acquires the mutex externally.
+    int setFixedRefreshRateRangeLocked(uint32_t minimumRefreshRate,
+                                       uint64_t minLockTimeForPeakRefreshRate,
+                                       bool force);
+
+    // Set the peak refresh rate. Locks mutex, stores peakFps, and force-refreshes
+    // the fixed refresh rate range with current stored settings.
+    void setPeakRefreshRate(int peakFps);
+
     void dump(String8& result, const std::vector<std::string>& args = {});
 
 private:
@@ -411,6 +421,7 @@ private:
     std::optional<TimedEvent> mMinimumRefreshRateTimeoutEvent;
     MinimumRefreshRatePresentStates mMinimumRefreshRatePresentState = kMinRefreshRateUnset;
     std::optional<uint32_t> mPendingMinimumRefreshRateRequest = std::nullopt;
+    uint32_t mPeakRefreshRate = 0;
 
     std::vector<std::shared_ptr<RefreshRateChangeListener>> mRefreshRateChangeListeners;
 
