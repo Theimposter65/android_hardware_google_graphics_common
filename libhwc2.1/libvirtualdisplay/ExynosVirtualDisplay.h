@@ -115,6 +115,7 @@ public:
      * Only DRM video playback scenario use it.
      */
     virtual int setReleaseFences();
+    virtual void setReleaseFencesForClientComposedLayers(const int& inFence, int* outFence) override;
 
     /**
      * check output buffer validation

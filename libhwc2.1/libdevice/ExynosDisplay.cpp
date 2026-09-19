@@ -2813,7 +2813,7 @@ int ExynosDisplay::setReleaseFences() {
                     continue;
                 }
             }
-            mLayers[i]->mReleaseFence = -1;
+            setReleaseFencesForClientComposedLayers(config.rel_fence, &mLayers[i]->mReleaseFence);
         }
         config.rel_fence = fence_close(config.rel_fence, this,
                    FENCE_TYPE_SRC_RELEASE, FENCE_IP_FB);
@@ -2964,6 +2964,14 @@ err:
     closeFences();
     mDisplayInterface->setForcePanic();
     return -EINVAL;
+}
+
+void ExynosDisplay::setReleaseFencesForClientComposedLayers(const int& inFence, int* outFence) {
+    if (outFence == nullptr) {
+        return;
+    }
+    *outFence = hwcCheckFenceDebug(this, FENCE_TYPE_SRC_RELEASE, FENCE_IP_ALL,
+                                  hwc_dup(inFence, this, FENCE_TYPE_SRC_RELEASE, FENCE_IP_ALL, false));
 }
 
 /**

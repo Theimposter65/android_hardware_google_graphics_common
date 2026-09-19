@@ -354,6 +354,13 @@ int ExynosVirtualDisplay::setReleaseFences()
     return ret;
 }
 
+void ExynosVirtualDisplay::setReleaseFencesForClientComposedLayers(const int& /*inFence*/, int* outFence) {
+    if (outFence == nullptr) {
+        return;
+    }
+    *outFence = -1;
+}
+
 bool ExynosVirtualDisplay::checkFrameValidation()
 {
     if (mOutputBuffer == NULL) {

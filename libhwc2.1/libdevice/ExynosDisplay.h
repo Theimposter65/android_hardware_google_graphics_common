@@ -715,6 +715,7 @@ class ExynosDisplay {
         virtual int deliverWinConfigData();
 
         virtual int setReleaseFences();
+        virtual void setReleaseFencesForClientComposedLayers(const int& inFence, int* outFence);
 
         virtual bool checkFrameValidation();
 
